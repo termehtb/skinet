@@ -1,0 +1,5 @@
+{
+    "editor.wordWrap": "on",
+    "omnisharp.enableImportCompletion": true,
+    "C_Cpp.errorSquiggles": "Enabled"
+}
