@@ -17,10 +17,11 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope()){
     var services = scope.ServiceProvider;
-    var loggerFactory = services.GetRequiredService<ILoggerFactory>;
+    var loggerFactory = services.GetRequiredService<ILoggerFactory>();
     try{
         var context = services.GetRequiredService<StoreContext>();
         await context.Database.MigrateAsync();
+        await StoreContextSeed.seedAsync(context, loggerFactory);
     }
     catch(Exception ex){
         

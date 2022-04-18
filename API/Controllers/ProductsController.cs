@@ -29,4 +29,14 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<Product>> GetProducts(int id){
         return await Repo.GetProductByIDAsync(id);
     }
+
+    [HttpGet("brands")]
+    public async Task<ActionResult<ProductBrand>> GetBrands(){
+        return Ok (await Repo.GetBrandsAsync());
+    }
+
+    [HttpGet("types")]
+    public async Task<ActionResult<ProductType>> GetTypes(){
+        return Ok (await Repo.GetTypesAsync());
+    }
 }
