@@ -18,12 +18,18 @@ namespace Infrastructure.Data
 
         public async Task<Product> GetProductByIDAsync(int id)
         {
-            return await Context.Products.FindAsync(id);
+            return await Context.Products
+            .Include(p => p.ProductBrand)
+            .Include(p => p.ProductType)
+            .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<IReadOnlyList<Product>> GetProductsAsync()
         {
-            return await Context.Products.ToListAsync();
+            return await Context.Products
+            .Include(p => p.ProductBrand)
+            .Include(p => p.ProductType)
+            .ToListAsync();
         }
 
         public async Task<IReadOnlyList<ProductBrand>> GetBrandsAsync()
