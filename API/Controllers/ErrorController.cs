@@ -10,6 +10,7 @@ using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 namespace API.Controllers
 {
     [Route("errors/{code}")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController: BaseApiController
     {
         public ActionResult Error (int code){

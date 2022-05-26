@@ -13,12 +13,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StoreContext>(x => x.UseSqlite(connectionString));
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.Configure<ApiBehaviorOptions>(options =>options.InvalidModelStateResponseFactory = actionContext => 
     {
         var errors = actionContext.ModelState
@@ -30,6 +24,13 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>options.InvalidModelSta
         };
         return new BadRequestObjectResult(errorResponse);
     });
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope()){
@@ -46,11 +47,12 @@ using (var scope = app.Services.CreateScope()){
 }
 
 // Configure the HTTP request pipeline.
+ app.UseMiddleware<ExceptionMiddleWare>();
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
 if (app.Environment.IsDevelopment())
 {
-    app.UseMiddleware<ExceptionMiddleWare>();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+   
 }
 
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
