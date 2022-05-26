@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using API.Helpers;
+using API.MiddleWare;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -34,9 +35,12 @@ using (var scope = app.Services.CreateScope()){
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseMiddleware<ExceptionMiddleWare>();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
