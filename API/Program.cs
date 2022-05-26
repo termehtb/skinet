@@ -1,8 +1,11 @@
+using System.Linq;
 using System.Runtime.CompilerServices;
+using API.Errors;
 using API.Helpers;
 using API.MiddleWare;
 using Core.Interfaces;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +19,17 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
-
+builder.Services.Configure<ApiBehaviorOptions>(options =>options.InvalidModelStateResponseFactory = actionContext => 
+    {
+        var errors = actionContext.ModelState
+            .Where(e => e.Value.Errors.Count > 0)
+            .SelectMany(x => x.Value.Errors)
+            .Select(x => x.ErrorMessage).ToArray();
+        var errorResponse = new ApiValidationErrorResponse{
+            Errors = errors
+        };
+        return new BadRequestObjectResult(errorResponse);
+    });
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope()){
