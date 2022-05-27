@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using API.Errors;
+using API.Extentions;
 using API.Helpers;
 using API.MiddleWare;
 using Core.Interfaces;
@@ -13,19 +14,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StoreContext>(x => x.UseSqlite(connectionString));
-builder.Services.Configure<ApiBehaviorOptions>(options =>options.InvalidModelStateResponseFactory = actionContext => 
-    {
-        var errors = actionContext.ModelState
-            .Where(e => e.Value.Errors.Count > 0)
-            .SelectMany(x => x.Value.Errors)
-            .Select(x => x.ErrorMessage).ToArray();
-        var errorResponse = new ApiValidationErrorResponse{
-            Errors = errors
-        };
-        return new BadRequestObjectResult(errorResponse);
-    });
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddApplicationServices();
+builder.Services.AddSwaggerDocumentation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -48,8 +38,8 @@ using (var scope = app.Services.CreateScope()){
 
 // Configure the HTTP request pipeline.
  app.UseMiddleware<ExceptionMiddleWare>();
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+ app.UseSwaggerDocumention();
+   
 if (app.Environment.IsDevelopment())
 {
    
