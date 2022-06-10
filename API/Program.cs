@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.AddCors(opt =>{
     opt.AddPolicy("CorsPolicy", policy => {
-    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:7154");
+    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
 });
 });
 
