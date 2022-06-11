@@ -1,6 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { map } from 'rxjs';
+import { IBrand } from '../shared/models/brand';
 import { IPagination } from '../shared/models/Pagination';
+import { IProductType } from '../shared/models/productType';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +11,27 @@ import { IPagination } from '../shared/models/Pagination';
 export class ShopService {
   baseUrl = 'https://localhost:7154/api/';
   constructor(private http : HttpClient) { }
-  getProduct(){
-    return this.http.get<IPagination>(this.baseUrl + 'products?pageSize=50');
+  getProduct(brandId?: number , typeId?: number){
+    let params = new HttpParams();
+
+    if(brandId){
+      params = params.append('brandId', brandId);
+    }
+    if(typeId){
+      params = params.append('typeId', typeId);
+    }
+    return this.http.get<IPagination>(this.baseUrl + 'products' , {observe: 'response', params})
+    .pipe(map(response => {
+      return response.body;
+    })
+    );
+  }
+  
+  getBrands(){
+    return this.http.get<IBrand[]>(this.baseUrl + 'products/brands');
+  }
+
+  getProductType(){
+    return this.http.get<IProductType[]>(this.baseUrl + 'products/types');
   }
 }
